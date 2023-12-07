@@ -14,6 +14,8 @@
 
         public Order Order { get; private set; }
 
+        public Agent? Agent { get; set; }
+
         public double DelayMin => (DelayTime - Order.DeliveredTime).TotalMinutes; 
         private DelayReport()
         {

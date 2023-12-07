@@ -20,15 +20,15 @@ namespace OrderDelayAnnouncement.Domain
 
         public Customer Customer { get; private set; }
 
-        public List<Trip> Trips { get; } = new List<Trip>();
+        public Trip? Trip { get; set; }
 
         public List<DelayReport> DelayReports { get; } = new List<DelayReport>();
 
         public bool CanReportDelay => DeliveredTime < DateTime.Now;
 
-        public bool CanCreateTrip => !Trips.Any();
+        public bool CanCreateTrip => Trip is null;
 
-        public bool IsValidTrip => Trips.Any() && Trips.All(x => x.ValidTrip);
+        public bool IsValidTrip => Trip is not null && Trip.ValidTrip;
 
         public bool CanPushToQueue => DelayReports
             .Any(x => x.AgentId.HasValue && x.Status == DelayReportStatus.PENDING);
@@ -39,6 +39,20 @@ namespace OrderDelayAnnouncement.Domain
         private Order()
         {
 
+        }
+
+        private Order(int id, int vendorId, int customerId, DateTime deliveredTime)
+        {
+            var now = DateTime.Now;
+            if (deliveredTime <= now)
+            {
+                throw new LogicException("Deliver Time Is Not Valid");
+            }
+            Id = id;
+            VendorId = vendorId;
+            CustomerId = customerId;
+            CreatedTime = now;
+            DeliveredTime = deliveredTime;
         }
 
 
@@ -59,6 +73,20 @@ namespace OrderDelayAnnouncement.Domain
         public static Order Create(int vendorId, int customerId, DateTime deliveredTime)
         {
             return new Order(vendorId, customerId, deliveredTime);
+        }
+
+        public static List<Order> CreateMock()
+        {
+
+            var order1 = new Order(1, 1, 1, DateTime.Now.AddMinutes(15));
+            order1.SetDeliveredAt(DateTime.Now.AddMinutes(5));
+
+            var order2 = new Order(2, 1, 2, DateTime.Now.AddMinutes(15));
+            order2.SetDeliveredAt(DateTime.Now.AddMinutes(20));
+
+            var order3 = new Order(3, 2, 2, DateTime.Now.AddMinutes(3));
+
+            return new List<Order> { order1, order2, order3 };
         }
 
         public void SetDeliveredAt(DateTime time)
@@ -90,7 +118,7 @@ namespace OrderDelayAnnouncement.Domain
 
             var trip = Trip.Create(Id, TripStatus.AT_VENDOR);
 
-            Trips.Add(trip);
+            Trip = trip;
 
             return trip;
         }
@@ -102,9 +130,9 @@ namespace OrderDelayAnnouncement.Domain
                 throw new LogicException("Can Not Create Trip");
             }
 
-            var trip = Trip.Create(Id , TripStatus.DELIVERED);
+            var trip = Trip.Create(Id, TripStatus.DELIVERED);
 
-            Trips.Add(trip);
+            Trip = trip;
 
             return trip;
         }

@@ -24,8 +24,23 @@ namespace OrderDelayAnnouncement.Infrastructure.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            SeedData(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
+        }
+
+        private static void SeedData(ModelBuilder modelBuilder)
+        {
+            var agents = Agent.CreateMock();
+            var vendors = Vendor.CreateMock();
+            var customers = Customer.CreateMock();
+            var orders = Order.CreateMock();
+
+            modelBuilder.Entity<Agent>().HasData(agents);
+            modelBuilder.Entity<Vendor>().HasData(vendors);
+            modelBuilder.Entity<Customer>().HasData(customers);
+            modelBuilder.Entity<Order>().HasData(orders);
         }
     }
 }

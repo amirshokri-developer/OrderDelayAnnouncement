@@ -18,12 +18,23 @@
             Name = name;
         }
 
+        private Vendor(int id , string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
         public static Vendor Create(string name)
         {
             return new Vendor(name);
         }
 
-        
+
+        public static List<Vendor> CreateMock()
+        {
+            return new List<Vendor> { new Vendor(1, "Motahari"), new Vendor(2, "Enghelab") };
+        }
+
 
     }
 }

@@ -15,6 +15,13 @@
 
         }
 
+        private Trip(int id , int orderId, TripStatus status)
+        {
+            Id = id;
+            OrderId = orderId;
+            Status = status;
+        }
+
         private Trip(int orderId, TripStatus status)
         {            
             OrderId = orderId;
@@ -36,5 +43,14 @@
                    Status == TripStatus.ASSIGNED || 
                    Status == TripStatus.PICKED);
         
+        public static Trip CreateMockDelivered(int orderId)
+        {
+            return new Trip(2, orderId, TripStatus.DELIVERED);
+        }
+
+        public static Trip CreateMockStart(int orderId)
+        {
+            return new Trip(1, orderId, TripStatus.AT_VENDOR);
+        }
     }
 }

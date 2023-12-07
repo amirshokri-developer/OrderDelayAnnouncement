@@ -15,7 +15,7 @@ namespace OrderDelayAnnouncement.Infrastructure.Persistance.Repositories
 
         public async Task<Order> GetAsync(int id)
         {
-            return await _context.Orders.Include(x => x.DelayReports).Include(x => x.Trips)
+            return await _context.Orders.Include(x => x.DelayReports).Include(x => x.Trip)
                  .FirstOrDefaultAsync(x => x.Id == id);
         }
 

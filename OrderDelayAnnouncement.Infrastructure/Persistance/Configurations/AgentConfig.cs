@@ -9,6 +9,10 @@ namespace OrderDelayAnnouncement.Infrastructure.Persistance.Configurations
         public void Configure(EntityTypeBuilder<Agent> builder)
         {
             builder.ToTable(nameof(Agent)).HasKey(x => x.Id);
+            builder.HasMany(c => c.DelayReports)
+                .WithOne(a => a.Agent)
+                .HasForeignKey(a => a.AgentId)
+                .IsRequired(false);
         }
     }
 
